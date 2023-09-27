@@ -3,25 +3,26 @@ import pyttsx3
 import pywhatkit
 import datetime
 import wikipedia
+import webbrowser
 
 listener = sr.Recognizer()
 engine = pyttsx3.init()
 
 voices = engine.getProperty("voices")
-engine.setProperty("voice",voices[1].id)
+engine.setProperty("voice", voices[0].id)
 
 def talk(text):
     engine.say(text)
     engine.runAndWait()
+
 def get_command():
     try:
         with sr.Microphone() as source:
-            print(" Listening.....")
+            print("Listening...")
             voice = listener.listen(source)
             command = listener.recognize_google(voice)
             command = command.lower()
-            if "youtube" in command:
-                command = command.replace("youtube","")
+            print("You said:", command)
     except:
         pass
     return command
@@ -29,24 +30,18 @@ def get_command():
 def run_assistant():
     command = get_command()
     if "play" in command:
-        song = command.replace("play","")
+        song = command.replace("play", "")
         pywhatkit.playonyt(song)
-        
     elif "time" in command:
         time = datetime.datetime.now().strftime("%H:%M %p")
-        talk("Now time is"+time)
-    
+        talk("The current time is " + time)
     elif "tell me about" in command:
-        about = command.replace("tell me about","")
-        info = wikipedia.summary(about,1)
+        about = command.replace("tell me about", "")
+        info = wikipedia.summary(about, 1)
         talk(info)
+
     else:
-        talk("sorry i can't understand tell me again ")
-    
+        talk("Sorry, I can't understand. Please tell me again.")
+
 while True:
     run_assistant()
-else:
-    pass
-    
-    
-    
